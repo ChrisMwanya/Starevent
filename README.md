@@ -70,4 +70,7 @@ Les tables sont dans le schéma PostgreSQL `site` ; les migrations SQL sont dans
 ## Parcours d'une demande de devis
 
 `apps/web` (formulaire) → `POST /quotes` sur `apps/api` → enregistrement dans `site.quote_requests` → email à l'équipe
-→ lien WhatsApp renvoyé au visiteur → suivi dans le back-office.
+(Resend) → lien WhatsApp renvoyé au visiteur → suivi dans le back-office.
+
+L'email part via [Resend](https://resend.com) : renseigner `RESEND_API_KEY`, `MAIL_FROM` (domaine vérifié dans Resend)
+et `MAIL_TO` dans `apps/api/.env`. Sans clé, le contenu de la notification est simplement affiché dans les logs.

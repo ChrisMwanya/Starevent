@@ -15,11 +15,10 @@ const envSchema = z.object({
   // Site Next.js à prévenir après une modification de contenu (revalidation du cache)
   WEB_URL: z.string().url().default('http://localhost:3000'),
   REVALIDATE_SECRET: z.string().default(''),
-  SMTP_HOST: z.string().default(''),
-  SMTP_PORT: z.coerce.number().int().positive().default(587),
-  SMTP_USER: z.string().default(''),
-  SMTP_PASSWORD: z.string().default(''),
+  // Envoi des emails via Resend (resend.com → API Keys) ; vide = pas d'envoi
+  RESEND_API_KEY: z.string().default(''),
   MAIL_FROM: z.string().default('Star Event <no-reply@starevent.cd>'),
+  // Destinataires des notifications, séparés par des virgules
   MAIL_TO: z.string().default(''),
 });
 

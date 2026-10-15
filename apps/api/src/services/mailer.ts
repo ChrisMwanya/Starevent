@@ -1,15 +1,11 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { env } from '../config/env.js';
 import type { QuoteRequest } from '../schemas/quote.js';
 
-const transporter = env.SMTP_HOST
-  ? nodemailer.createTransport({
-      host: env.SMTP_HOST,
-      port: env.SMTP_PORT,
-      secure: env.SMTP_PORT === 465,
-      auth: env.SMTP_USER ? { user: env.SMTP_USER, pass: env.SMTP_PASSWORD } : undefined,
-    })
-  : null;
+const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
+const recipients = env.MAIL_TO.split(',')
+  .map((address) => address.trim())
+  .filter(Boolean);
 
 export async function notifyNewQuoteRequest(quote: QuoteRequest): Promise<void> {
   const lines = [
@@ -24,16 +20,18 @@ export async function notifyNewQuoteRequest(quote: QuoteRequest): Promise<void> 
     quote.message,
   ];
 
-  if (!transporter || !env.MAIL_TO) {
-    console.info('[mailer] SMTP non configuré, notification non envoyée :\n' + lines.join('\n'));
+  if (!resend || recipients.length === 0) {
+    console.info('[mailer] Resend non configuré, notification non envoyée :\n' + lines.join('\n'));
     return;
   }
 
-  await transporter.sendMail({
+  // Le SDK Resend ne lève pas d'exception : l'échec est dans `error`
+  const { error } = await resend.emails.send({
     from: env.MAIL_FROM,
-    to: env.MAIL_TO,
+    to: recipients,
     replyTo: quote.email,
     subject: `Nouvelle demande de devis — ${quote.eventType} — ${quote.fullName}`,
     text: lines.join('\n'),
   });
+  if (error) throw new Error(`Resend : ${error.message}`);
 }
