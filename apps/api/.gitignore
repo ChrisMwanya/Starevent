@@ -1,0 +1,5 @@
+node_modules
+dist
+.env
+# Images envoyées depuis le back-office
+uploads

@@ -1,0 +1,181 @@
+@import "tailwindcss";
+
+/* Couleurs issues du logo « Éclat » — à ajuster à la livraison de la charte graphique */
+:root {
+  --brand-magenta: #e4007c;
+  --brand-orange: #ff5b1f;
+  --brand-ink: #150f13;
+  --brand-cream: #fff8f1;
+
+  /* Thème sombre par défaut ; le thème clair est appliqué par `data-theme` (voir layout.tsx et lib/theme.ts) */
+  color-scheme: dark;
+  --background: #0c090b;
+  --foreground: var(--brand-cream);
+  --surface: #1e181c;
+  --line: rgb(255 248 241 / 0.16);
+  --muted: rgb(255 248 241 / 0.6);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --background: #fbf7f2;
+  --foreground: var(--brand-ink);
+  --surface: #f0e8e0;
+  --line: rgb(21 15 19 / 0.14);
+  --muted: rgb(21 15 19 / 0.62);
+}
+
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-muted: var(--muted);
+  --color-brand-magenta: var(--brand-magenta);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-cream: var(--brand-cream);
+  --font-sans: var(--font-inter);
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-marquee-slow: marquee 60s linear infinite;
+  --animate-rise: rise 1s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  --animate-fade-up: fade-up 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-drift: drift 24s ease-in-out infinite alternate;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes rise {
+    from {
+      transform: translateY(110%);
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+  }
+
+  @keyframes float {
+    50% {
+      transform: translateY(-0.6rem);
+    }
+  }
+
+  /* Zoom lent appliqué par le navigateur : la vidéo elle-même reste fixe pour éviter les saccades */
+  @keyframes drift {
+    to {
+      transform: scale(1.08);
+    }
+  }
+}
+
+/* Gouttière commune à toutes les sections */
+@utility shell {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 87.5rem;
+  padding-inline: 1.25rem;
+
+  @media (min-width: 48rem) {
+    padding-inline: 2.5rem;
+  }
+}
+
+@utility bg-eclat {
+  background-image: linear-gradient(135deg, var(--brand-magenta), var(--brand-orange));
+}
+
+/* Dégradé de la marque qui apparaît en fondu au survol : un dégradé ne s’anime pas comme une couleur.
+   S'active au survol de l'élément ou de son parent `.group`. */
+@utility hover-eclat {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: linear-gradient(135deg, var(--brand-magenta), var(--brand-orange));
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  &:hover::before,
+  :where(.group):hover &::before {
+    opacity: 1;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Apparition au défilement : `data-reveal` est activé par <RevealObserver />.
+   Sans JavaScript ou avec les animations réduites, le contenu reste visible. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(2.5rem);
+    transition:
+      opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+      translate 0.3s ease;
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal][data-revealed] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Animations liées au défilement, là où le navigateur les prend en charge */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-parallax {
+      animation: parallax linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+  }
+}
+
+@keyframes parallax {
+  to {
+    translate: 0 8%;
+    scale: 1.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-marquee,
+  .animate-marquee-slow,
+  .animate-rise,
+  .animate-fade-up,
+  .animate-float,
+  .animate-drift {
+    animation: none;
+  }
+}

@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: starevent-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-starevent}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-starevent}
+      POSTGRES_DB: ${POSTGRES_DB:-starevent}
+    ports:
+      # 5434 côté hôte : 5432 (PostgreSQL Homebrew) et 5433 (autre projet Docker) sont déjà pris
+      - "${POSTGRES_PORT:-5434}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:

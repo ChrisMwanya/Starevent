@@ -1,0 +1,26 @@
+{
+  "name": "starevent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Site web Star Event — Next.js, API Express, PostgreSQL",
+  "scripts": {
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "dev": "concurrently -n web,api -c magenta,green \"npm:dev:web\" \"npm:dev:api\"",
+    "dev:web": "npm --prefix apps/web run dev",
+    "dev:api": "npm --prefix apps/api run dev",
+    "build": "npm run build:api && npm run build:web",
+    "build:web": "npm --prefix apps/web run build",
+    "build:api": "npm --prefix apps/api run build",
+    "install:all": "npm install && npm --prefix apps/web install && npm --prefix apps/api install",
+    "db:migrate": "npm --prefix apps/api run db:migrate",
+    "db:seed": "npm --prefix apps/api run db:seed",
+    "admin:create": "npm --prefix apps/api run admin:create --"
+  },
+  "engines": {
+    "node": ">=22 <=24"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  }
+}
