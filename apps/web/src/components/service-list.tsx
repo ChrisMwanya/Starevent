@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { ArrowLink } from "@/components/arrow-link";
 import type { Service } from "@/lib/content";
-import { eventTypes, mediaUrl } from "@/lib/site";
+import { eventTypes } from "@/lib/site";
 import { reveal } from "@/lib/motion";
 
 export type ServiceItem = {
@@ -37,9 +37,7 @@ export function serviceItems(services: Service[]): ServiceItem[] {
       title: service.title,
       excerpt: service.excerpt,
       priceRange: service.priceRange,
-      image: service.coverUrl
-        ? mediaUrl(service.coverUrl)
-        : (eventTypes.find((type) => type.value === service.category)?.image ?? null),
+      image: service.coverUrl || (eventTypes.find((type) => type.value === service.category)?.image ?? null),
     };
   });
 }

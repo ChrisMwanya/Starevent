@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Sparkle } from "@/components/icons";
 import type { Project } from "@/lib/content";
-import { eventTypeLabel, mediaUrl } from "@/lib/site";
+import { eventTypeLabel } from "@/lib/site";
 
 const monthYear = new Intl.DateTimeFormat("fr-FR", {
   month: "short",
@@ -22,7 +22,7 @@ export function ProjectCard({
       <div className={`relative overflow-hidden bg-surface ${ratio}`}>
         {project.coverUrl ? (
           <Image
-            src={mediaUrl(project.coverUrl)}
+            src={project.coverUrl}
             alt={project.title}
             fill
             sizes={sizes}

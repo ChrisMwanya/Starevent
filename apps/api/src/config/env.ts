@@ -9,8 +9,9 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(4000),
   CORS_ORIGINS: z.string().default('http://localhost:3000'),
   DATABASE_URL: z.string().default('postgres://starevent:starevent@127.0.0.1:5434/starevent'),
-  // Dossier des images envoyées depuis le back-office, servi sur /uploads
-  UPLOADS_DIR: z.string().default('uploads'),
+  // Stockage des images du back-office : cloudinary://<clé>:<secret>@<cloud> (console Cloudinary → API Keys)
+  CLOUDINARY_URL: z.string().default(''),
+  CLOUDINARY_FOLDER: z.string().default('starevent'),
   // Site Next.js à prévenir après une modification de contenu (revalidation du cache)
   WEB_URL: z.string().url().default('http://localhost:3000'),
   REVALIDATE_SECRET: z.string().default(''),

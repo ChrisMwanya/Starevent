@@ -1,6 +1,3 @@
-import { randomBytes } from 'node:crypto';
-import { mkdirSync } from 'node:fs';
-import path from 'node:path';
 import { Router, type Response } from 'express';
 import rateLimit from 'express-rate-limit';
 import multer from 'multer';
@@ -17,6 +14,7 @@ import {
   slugify,
   type Resource,
 } from '../resources.js';
+import { isMediaConfigured, uploadImageBuffer } from '../services/media.js';
 import { createSession, deleteSession, SESSION_COOKIE, SESSION_TTL_MS, verifyPassword } from '../services/auth.js';
 import { revalidateSite } from '../services/revalidate.js';
 import { getSettings, saveSettings } from '../services/settings.js';
@@ -97,29 +95,22 @@ adminRouter.get('/stats', async (_req, res) => {
 
 /* ---------- Images ---------- */
 
-const uploadsDir = path.resolve(env.UPLOADS_DIR);
-mkdirSync(uploadsDir, { recursive: true });
-
 // Pas de SVG : un SVG peut embarquer du script
-const imageTypes: Record<string, string> = {
-  'image/jpeg': '.jpg',
-  'image/png': '.png',
-  'image/webp': '.webp',
-  'image/avif': '.avif',
-};
+const imageTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/avif']);
 
+// Le fichier reste en mémoire le temps de l'envoyer à Cloudinary
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: uploadsDir,
-    filename: (_req, file, callback) =>
-      callback(null, `${randomBytes(12).toString('hex')}${imageTypes[file.mimetype]}`),
-  }),
+  storage: multer.memoryStorage(),
   limits: { fileSize: 8 * 1024 * 1024, files: 1 },
-  fileFilter: (_req, file, callback) => callback(null, Object.hasOwn(imageTypes, file.mimetype)),
+  fileFilter: (_req, file, callback) => callback(null, imageTypes.has(file.mimetype)),
 });
 
 adminRouter.post('/uploads', (req, res) => {
-  upload.single('file')(req, res, (error) => {
+  if (!isMediaConfigured) {
+    res.status(503).json({ error: 'Stockage des images non configuré (CLOUDINARY_URL).' });
+    return;
+  }
+  upload.single('file')(req, res, async (error) => {
     if (error) {
       const tooLarge = error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE';
       res.status(400).json({ error: tooLarge ? 'Image trop lourde (8 Mo maximum).' : 'Envoi impossible.' });
@@ -129,7 +120,12 @@ adminRouter.post('/uploads', (req, res) => {
       res.status(400).json({ error: 'Formats acceptés : JPEG, PNG, WebP ou AVIF.' });
       return;
     }
-    res.status(201).json({ data: { url: `/uploads/${req.file.filename}` } });
+    try {
+      res.status(201).json({ data: { url: await uploadImageBuffer(req.file.buffer) } });
+    } catch (uploadError) {
+      console.error('[cloudinary]', uploadError);
+      res.status(502).json({ error: 'Envoi de l’image vers Cloudinary impossible, merci de réessayer.' });
+    }
   });
 });
 

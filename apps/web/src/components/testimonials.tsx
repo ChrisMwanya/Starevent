@@ -1,6 +1,5 @@
 import Image from "next/image";
 import type { Testimonial } from "@/lib/content";
-import { mediaUrl } from "@/lib/site";
 import { reveal } from "@/lib/motion";
 
 /** Rangée de témoignages à défilement horizontal ; la première carte porte la couleur de marque. */
@@ -18,7 +17,7 @@ export function Testimonials({ items }: { items: Testimonial[] }) {
           <div className="flex items-start justify-between">
             {item.photoUrl ? (
               <Image
-                src={mediaUrl(item.photoUrl)}
+                src={item.photoUrl}
                 alt=""
                 width={48}
                 height={48}

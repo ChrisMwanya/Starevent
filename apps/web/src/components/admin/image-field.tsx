@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { uploadImage } from "@/lib/admin/client";
-import { mediaUrl } from "@/lib/site";
 import { secondaryButton } from "./ui";
 
 /** Choix d'une image : envoi immédiat à l'API, puis l'adresse renvoyée est enregistrée avec le formulaire. */
@@ -29,7 +28,7 @@ export function ImageField({ value, onChange }: { value: string | null; onChange
       <div className="grid aspect-[4/3] w-36 place-items-center overflow-hidden rounded-md border border-line bg-background">
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element -- aperçu d'une image tout juste envoyée
-          <img src={mediaUrl(value)} alt="" className="size-full object-cover" />
+          <img src={value} alt="" className="size-full object-cover" />
         ) : (
           <span className="text-xs text-muted">Aucune image</span>
         )}

@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Sparkle } from "@/components/icons";
 import type { TeamMember } from "@/lib/content";
 import { reveal } from "@/lib/motion";
-import { mediaUrl } from "@/lib/site";
 
 /** Cartes de l'équipe ; sans portrait, un éclat du logo tient la place de la photo. */
 export function Team({ members }: { members: TeamMember[] }) {
@@ -14,7 +13,7 @@ export function Team({ members }: { members: TeamMember[] }) {
             <div className="hover-eclat grid aspect-[3/4] place-items-center overflow-hidden bg-surface">
               {member.photoUrl ? (
                 <Image
-                  src={mediaUrl(member.photoUrl)}
+                  src={member.photoUrl}
                   alt={`${member.name}, ${member.role}`}
                   fill
                   sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 100vw"

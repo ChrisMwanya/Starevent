@@ -9,7 +9,7 @@ const optionalText = (max: number) =>
     .max(max)
     .nullish()
     .transform((value) => value || null);
-// Image envoyée par le back-office (/uploads/…), image du site (/…) ou adresse complète
+// Image envoyée par le back-office (Cloudinary), image du site (/…) ou adresse complète
 const mediaUrl = z
   .string()
   .trim()

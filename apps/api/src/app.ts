@@ -1,4 +1,3 @@
-import path from 'node:path';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
@@ -19,13 +18,6 @@ export function createApp() {
   app.use(cors({ origin: env.corsOrigins, credentials: true }));
   app.use(cookieParser());
   app.use(express.json({ limit: '100kb' }));
-
-  // Images du back-office, affichées par le site (autre origine)
-  app.use(
-    '/uploads',
-    helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }),
-    express.static(path.resolve(env.UPLOADS_DIR), { maxAge: '30d', immutable: true, index: false }),
-  );
 
   app.use('/health', healthRouter);
   app.use('/content', contentRouter);

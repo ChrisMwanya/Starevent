@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Sparkle } from "@/components/icons";
 import type { Client } from "@/lib/content";
 import { reveal } from "@/lib/motion";
-import { mediaUrl } from "@/lib/site";
 
 const cellClass =
   "group flex size-full items-center justify-center gap-2 px-6 text-lg font-medium text-foreground/45 transition-colors duration-300 hover:bg-surface hover:text-foreground";
@@ -15,7 +14,7 @@ export function Clients({ clients }: { clients: Client[] }) {
         const content = client.logoUrl ? (
           <span className="relative block h-12 w-full">
             <Image
-              src={mediaUrl(client.logoUrl)}
+              src={client.logoUrl}
               alt={client.name}
               fill
               sizes="12rem"

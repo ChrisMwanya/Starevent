@@ -27,11 +27,6 @@ export function addressLines(settings: Settings): string[] {
     .filter(Boolean);
 }
 
-/** Image envoyée depuis le back-office (servie par l'API) ou image du site (dossier `public`). */
-export function mediaUrl(path: string): string {
-  return path.startsWith("/uploads/") ? `${siteConfig.apiUrl}${path}` : path;
-}
-
 /** Numéro au format international lisible, à partir des chiffres seuls. */
 export function formatPhone(digits: string): string {
   return `+${digits.replace(/\D/g, "").replace(/^(\d{3})(\d{3})(\d{3})(\d+)$/, "$1 $2 $3 $4")}`;

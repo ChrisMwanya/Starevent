@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { adminFetch, AdminApiError, type FieldErrors } from "@/lib/admin/client";
 import { adminResources, type AdminResourceName, type FieldConfig } from "@/lib/admin/resources";
-import { mediaUrl } from "@/lib/site";
 import { AdminHeader } from "./admin-shell";
 import { ImageField } from "./image-field";
 import { dangerButton, inputClass, primaryButton, secondaryButton } from "./ui";
@@ -89,7 +88,7 @@ export function ResourceManager({ resource }: { resource: AdminResourceName }) {
                   <div className="aspect-[4/3] w-20 shrink-0 overflow-hidden rounded bg-surface">
                     {image ? (
                       // eslint-disable-next-line @next/next/no-img-element -- vignette du back-office
-                      <img src={mediaUrl(image)} alt="" className="size-full object-cover" />
+                      <img src={image} alt="" className="size-full object-cover" />
                     ) : null}
                   </div>
                 ) : null}

@@ -48,8 +48,9 @@ Le back-office est ensuite sur http://localhost:3000/admin. `db:seed` ne remplit
 Chaque élément peut être enregistré en brouillon (non publié). Après une modification, l'API demande au site de
 rafraîchir son cache (`POST /api/revalidate` sur `apps/web`) : le changement est visible immédiatement.
 
-Les images sont envoyées à l'API (JPEG, PNG, WebP ou AVIF, 8 Mo maximum), stockées dans `apps/api/uploads/`
-et servies sur `/uploads`. En production, ce dossier doit être sur un volume persistant et sauvegardé.
+Les images sont envoyées à l'API (JPEG, PNG, WebP ou AVIF, 8 Mo maximum), qui les dépose sur Cloudinary
+(dossier `CLOUDINARY_FOLDER`) et enregistre leur adresse `https://res.cloudinary.com/…`. Renseigner
+`CLOUDINARY_URL` dans `apps/api/.env` (console Cloudinary → Settings → API Keys) ; sans elle, l'envoi d'images est désactivé.
 
 ## API
 
